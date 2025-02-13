@@ -1,53 +1,56 @@
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-    public class EnemyControls : MonoBehaviour
+public class EnemyControls : MonoBehaviour
+{
+    public float speed = 2f;
+    public float attackDistance = 0.6f;
+
+    private Animator animatorEnemy;
+    private Rigidbody rigidbodyEnemy;
+    private Transform target;
+
+    [SerializeField]
+    private bool isFollowingTarget;
+
+    private float currentAttackTime = 0f;
+    private float maxAttackingTime = 2f;
+
+    // Start is called before the first frame update
+    void Start()
     {
-        public float speed = 2f;
-        public float attackDistance = 0.6f;
+        animatorEnemy = GetComponent<Animator>();
+        rigidbodyEnemy = GetComponent<Rigidbody>();
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
-        private Animator animatorEnemy;
-        private Rigidbody rigidbodyEnemy;
-        private Transform target;
+    // Update is called once per frame
+    void Update()
+    {
+        transform.LookAt(target.position);
 
-        [SerializeField]
-        private bool isFollowingTarget;
-
-        private float currentAttackTime = 0f;
-        private float maxAttackingTime = 2f;
-        // Start is called before the first frame update
-        void Start()
+        isFollowingTarget = Vector3.Distance(transform.position, target.position) >= attackDistance;
+        if (isFollowingTarget)
         {
-            animatorEnemy = GetComponent<Animator>();
-            rigidbodyEnemy = GetComponent<Rigidbody>();
-            target = GameObject.FindGameObjectWithTag("Player").transform;
+            rigidbodyEnemy.velocity = transform.forward * speed;
         }
-
-        // Update is called once per frame
-        void Update()
+        else
         {
-            transform.LookAt(target.position);
-
-            isFollowingTarget = Vector3.Distance(transform.position, target.position) >= attackDistance;
-            if (isFollowingTarget)
-            {
-                rigidbodyEnemy.velocity = transform.forward * speed;
-            } else
-            {
-                Attack();
-            }
-            animator.SetBool("Walk", isFollowingTarget);
+            Attack();
         }
+        animatorEnemy.SetBool("Walk", isFollowingTarget);
+    }
 
-        void Attack(){
-            rigidbodyEnemy.velocity = Vector3.zero;
-            currentAttackingTime += Time.deltaTime; 
-            if (currentAttackingTime > maxAttackingTime){
-
-                currentAttackingTime = 0f;
-                animatorEnemy.SetTrigger("Attack1" + rand); 
-                int rand = Random.Range(1, 4); 
-            }
+    void Attack()
+    {
+        rigidbodyEnemy.velocity = Vector3.zero;
+        currentAttackTime += Time.deltaTime;
+        if (currentAttackTime > maxAttackingTime)
+        {
+            currentAttackTime = 0f;
+            int rand = Random.Range(1, 4);
+            animatorEnemy.SetTrigger("Attack1" + rand);
         }
     }
+}
