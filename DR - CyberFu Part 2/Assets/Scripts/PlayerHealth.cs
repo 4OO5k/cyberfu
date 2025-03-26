@@ -8,19 +8,26 @@ public class PlayerHealth : MonoBehaviour
     public int maxPlayerHealth = 10;
     public int currentPlayerHealth;
     public int enemyDamage = 2;
-
+    public PlayerExplosionParticles particles;
     private Animator playerAnimator;
     void Start()
     {
         currentPlayerHealth = maxPlayerHealth;
 
         playerAnimator = GetComponent<Animator>();
+        particles = GetComponent<PlayerExplosionParticles>();
     }
 
     public void HurtPlayer()
     {
         currentPlayerHealth -= enemyDamage;
         playerAnimator.SetTrigger("Hit");
+
+        if (currentPlayerHealth <= 0)
+        {
+            particles.Explode();
+            Invoke("ReloadScene", 5);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -29,6 +36,11 @@ public class PlayerHealth : MonoBehaviour
         {
             HurtPlayer();
         }
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene("CyberFu");
     }
     
 }
