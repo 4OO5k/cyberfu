@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
 {
     public int maxPlayerHealth = 10;
     public int currentPlayerHealth;
-    public int enemyDamage = 2;
+    public int enemyDamage = 4;
     public PlayerExplosionParticles particles;
     private Animator playerAnimator;
     void Start()
